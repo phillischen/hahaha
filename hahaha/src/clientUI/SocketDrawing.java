@@ -26,18 +26,22 @@ public class SocketDrawing extends JComponent {
 	private int currentX, currentY, oldX, oldY;
 	private MouseListener ml;
 	private MouseMotionListener mml;
-	private String currentColor;
+	private int red;
+	private int green;
+	private int blue;
 	ClientSocket clientSocket;
 
 	
 	public SocketDrawing(BufferedImage loadimg, ClientSocket sk) {
 		paintImg(loadimg);
 		clientSocket = sk;
+		g2.setPaint(Color.black);
 	}
 	
 
 	public SocketDrawing(ClientSocket sk) {
 		clientSocket = sk;
+		g2.setPaint(Color.black);
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -292,6 +296,14 @@ public class SocketDrawing extends JComponent {
 		g2.setPaint(Color.black);
 		currentColor = "black";
 		repaint();
+	}
+	
+	public void cc(Color color) {
+		g2.setPaint(color);
+		String x = color.getRed()+","+color.getGreen()+","+color.getBlue();
+		System.out.println(x);
+		
+		
 	}
 
 	public void red() {

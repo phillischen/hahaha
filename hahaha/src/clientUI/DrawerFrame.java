@@ -8,9 +8,13 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -36,10 +40,11 @@ public class DrawerFrame extends JFrame {
 	private String ip = "localhost";
 	private static int port = 3000;
 	private String userName="goudan";
+	protected SingleDrawing draw1 = new SingleDrawing();
 
 	
 	private List<JMenuItem> list;// list用于存放菜单选项方便给每个菜单选项添加监听器
-	private File file;//当前打开或保存到的文件路径
+	private String file;//当前打开或保存到的文件路径
 	/**
 	 * 程序的入口主函数
 	 */
@@ -92,10 +97,11 @@ public class DrawerFrame extends JFrame {
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setIconImage(new ImageIcon("src" + File.separator+"ui"+ File.separator+"draw.png").getImage());
+		this.setIconImage(new ImageIcon("draw.png").getImage());
 
 		// 调用创建菜单选项的方法在窗体上创建菜单选项
 		createMenuBar();		
+		/*
 		// 实例化一个JPanel对象用于放置画板绘图区域
 		JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
 		centerPanel.setBackground(Color.GRAY);// 设置背景色为灰色
@@ -107,7 +113,9 @@ public class DrawerFrame extends JFrame {
 		// 设置绘图区域的大小
 		drawPanel.setPreferredSize(new Dimension(657, 492));
 		// 将绘图区域添加到centerPanel中
-		SingleDrawing draw1 = new SingleDrawing();
+		
+		 */
+		
 		
 		//centerPanel.add(draw1);
 		//drawPanel.add(draw1);
@@ -115,7 +123,7 @@ public class DrawerFrame extends JFrame {
 		this.add(draw1, BorderLayout.CENTER);
 
 		// 实例化一个图形选择工具条
-		ToolsPanel toolsPanel = new ToolsPanel();
+		ToolsPanel toolsPanel = new ToolsPanel(draw1,isManager);
 		// 将图形选择工具条添加到窗体上
 		this.add(toolsPanel, BorderLayout.WEST);
 		this.setVisible(true);
@@ -129,11 +137,11 @@ public class DrawerFrame extends JFrame {
 		this.setVisible(true);
 
 		// 给DrawPanel添加监听器
-		Graphics2D graphics2d = (Graphics2D) drawPanel.getGraphics();
+		//Graphics2D graphics2d = (Graphics2D) drawPanel.getGraphics();
 		// 实例化一个绘图区域的监听器
-		DrawListener dl = new DrawListener(graphics2d, toolsPanel);
-		drawPanel.addMouseListener(dl);
-		drawPanel.addMouseMotionListener(dl);
+		//DrawListener dl = new DrawListener(graphics2d, toolsPanel);
+		//drawPanel.addMouseListener(dl);
+		//drawPanel.addMouseMotionListener(dl);
 		// 实例化一个菜单选项监听器对象
 		/*
 		MenuListener ml = new MenuListener(graphics2d);
@@ -162,13 +170,24 @@ public class DrawerFrame extends JFrame {
 				switch(menuAction) { //set color
 				case "New"://TODO 如果是新建，则新建
 					System.out.println("menuAction="+menuAction);
+					draw1.clear();
+					file = null;
 					break;
 
 				case "Open"://TODO 如果是open，通过弹窗选取路径，接下来要做的是将文件读到画板
 					int select = fc.showOpenDialog(menuBar);//显示打开文件对话框  
 					if(select == JFileChooser.APPROVE_OPTION)//选择的是否为“确认”  
 					{  
-						file = fc.getSelectedFile();  
+						file = fc.getSelectedFile().toString();
+						
+						BufferedImage img;
+						try {
+							img = ImageIO.read(new File(file.toString()));
+							draw1.paintImg(img);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						System.out.println("文件"+file+"被打开");  
 					}  
 					else  
@@ -180,11 +199,24 @@ public class DrawerFrame extends JFrame {
 					System.out.println("menuAction="+menuAction);
 					//如果目前还没有打开或保存到过任何路径，则选取一个
 					if(file==null){
-						System.out.println("保存操作被取消");  
+						System.out.println("保存");  
 						int select1 = fc.showSaveDialog(menuBar);//显示保存文件对话框  
 						if(select1 == JFileChooser.APPROVE_OPTION)  
 						{  
-							file = fc.getSelectedFile();  
+							file = fc.getSelectedFile().toString(); 
+							if(file.matches(".*\\.png")) {								
+							}
+							else file = file+".png";
+							System.out.println(file);  
+							
+							try {
+					    		File fl = new File(file);
+								ImageIO.write((BufferedImage)draw1.save(), "png", fl);
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								System.out.println("save error!");
+								e1.printStackTrace();
+							}
 							System.out.println("文件"+file+"被保存");  
 						}  
 						else  
@@ -192,6 +224,14 @@ public class DrawerFrame extends JFrame {
 
 					}else{
 						//如果已有，直接存到已有路径
+						try {
+				    		File fl = new File(file);
+							ImageIO.write((BufferedImage)draw1.save(), "png", fl);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							System.out.println("save error!");
+							e1.printStackTrace();}
+						System.out.println("文件"+file+"被保存");
 					}
 					break;
 
@@ -201,7 +241,20 @@ public class DrawerFrame extends JFrame {
 					int select2 = fc.showSaveDialog(menuBar);//显示保存文件对话框  
 					if(select2 == JFileChooser.APPROVE_OPTION)  
 					{  
-						file = fc.getSelectedFile();  
+						file = fc.getSelectedFile().toString(); 
+						if(file.matches(".*\\.png")) {								
+						}
+						else file = file+".png";
+						System.out.println(file);  
+						
+						try {
+				    		File fl = new File(file);
+							ImageIO.write((BufferedImage)draw1.save(), "png", fl);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							System.out.println("save error!");
+							e1.printStackTrace();
+						}
 						System.out.println("文件"+file+"被保存");  
 					}  
 					else  
@@ -211,6 +264,7 @@ public class DrawerFrame extends JFrame {
 
 				case "Close"://TODO 关闭
 					System.out.println("menuAction="+menuAction);
+					System.exit(0);
 					break;
 
 
@@ -228,13 +282,19 @@ public class DrawerFrame extends JFrame {
 			JMenu menu = new JMenu(arrayMenu[i]);
 			for (int j = 0; j < arrayMenuItem[i].length; j++) {
 				// 实例化一个JMenuItem对象
+				if(isManager||i!=0) {
 				JMenuItem item = new JMenuItem(arrayMenuItem[i][j]);
 				list.add(item);
 				// 将JMenuItem对象添加到JMenu中
-				menu.add(item);
-				item.setActionCommand(arrayMenuItem[i][j]);
-				// 给按钮绑定监听器
-				item.addActionListener(l);
+
+					item.setActionCommand(arrayMenuItem[i][j]);
+					// 给按钮绑定监听器
+					item.addActionListener(l);
+					menu.add(item);
+
+				}
+
+
 			}
 			// 将JMenu添加到JMenuBar中
 			menuBar.add(menu);

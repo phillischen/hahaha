@@ -18,6 +18,7 @@ import javax.swing.JPanel;
  * 工具栏里没有什么需要对接的东西，比较简单
  * 
  */
+
 public class ToolsPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -28,13 +29,18 @@ public class ToolsPanel extends JPanel {
 	private JButton ss;//目前选择的大小按钮
 	private Color colorL;//左键存储的颜色
 	private Color colorR;//右键存储的颜色
+	private SingleDrawing draw1;
+	private Boolean isManager;
 	
-	public ToolsPanel() {
-		this.tool = "1";
+	public ToolsPanel(SingleDrawing draw,boolean isManager) {
+		this.tool="1";
 		this.size="2";
+		this.isManager=isManager;
 		colorL = Color.BLACK;
 		colorR = Color.WHITE;
+		this.draw1 = draw;
 		initUI();
+		
 	}
 	
 	private void initUI() {
@@ -50,9 +56,44 @@ public class ToolsPanel extends JPanel {
 				}
 				//标记选取到的tool是什么
 				tool = e.getActionCommand();
+				switch (tool) {
+				case "3":
+					draw1.straightLine();
+					break;
+				case "2":
+					String x = inputText();
+					System.out.println(x);
+					draw1.drawText(x);
+					break;
+				case "4":
+					draw1.rectangle();
+					break;
+				case "5":
+					draw1.oval();;
+					break;
+				case "6":
+					draw1.circle();;
+					break;
+				case "7":
+					int y = Integer.parseInt(size);					
+					draw1.eraser(y*10);
+					break;
+				case "1":
+					draw1.freedDraw();;
+					break;
+				
+				
+				}
+				 
+					
+				
 				//将目前使用的tool按钮按下
 				sb=(JButton) e.getSource();
+
 				sb.setEnabled(false);
+				if (tool.equals("2")) {
+					sb.setEnabled(true);
+				}
 				if(panel!=null){		
 				if(tool.equals("7")){
 						panel.setVisible(true);		
@@ -69,7 +110,7 @@ public class ToolsPanel extends JPanel {
 		panel0.setBackground(new Color(220,220,220));
 		for (int i = 1; i < 8; i++) {
 			// 根据得到的URL来加载按钮的背景图片
-			ImageIcon icon = new ImageIcon("src" + File.separator+"ui"+ File.separator+i+".png");;
+			ImageIcon icon = new ImageIcon(i+".png");;
 			//ImageIcon icon = new ImageIcon("1.png");
 			// 实例化一个按钮对象
 			JButton button = new JButton(icon);
@@ -111,10 +152,10 @@ public class ToolsPanel extends JPanel {
 		jbuR.setOpaque(true);
 		jbuR.setBorderPainted(false);
 		//放到panel1上面
-		jbuL.setBounds(6, 6, 19, 19);
+		jbuL.setBounds(6, 6, 28, 28);
 		jbuR.setBounds(17, 17, 19, 19);
 		panel1.add(jbuL);
-		panel1.add(jbuR);
+		//panel1.add(jbuR);
 		this.add(panel1);//panel1放入左侧
 		
 
@@ -125,18 +166,16 @@ public class ToolsPanel extends JPanel {
 				JButton button = (JButton) e.getSource();
 				if (e.getButton() == 1) {// 当按下鼠标左键的时候将鼠标左键对应的颜色设置为当前值
 					colorL = button.getBackground();
+					draw1.cc(colorL);
 					jbuL.setBackground(colorL);
-				} else if (e.getButton() == 3) {// 当按下鼠标右键的时候将鼠标右键对应的颜色设置为当前值
-					colorR = button.getBackground();
-					jbuR.setBackground(colorR);
-				}
+				} 
 			}
 		};
 		
 		JPanel panel2 = new JPanel(new GridLayout(8, 2, 2, 2));
 		// 定义一个数组，用来存储颜色选取面板
-		Color[] array = { Color.BLACK,new Color(40,40,40),new Color(80,80,80),new Color(120,120,120),new Color(160,160,160),
-				new Color(200,200,200),new Color(240,240,240), Color.WHITE, Color.RED, Color.GREEN,
+		Color[] array = { Color.BLACK,new Color(140,40,40),new Color(180,80,80),new Color(220,120,120),new Color(240,160,160),
+				new Color(100,100,200),new Color(110,100,240), Color.WHITE, Color.RED, Color.GREEN,
 				Color.BLUE, Color.GRAY, Color.ORANGE, Color.PINK, Color.CYAN,Color.MAGENTA
 				};
 		//将每个颜色注入颜色选取面板
@@ -159,6 +198,11 @@ public class ToolsPanel extends JPanel {
 					ss.setEnabled(true);	
 				}
 				size = e.getActionCommand();
+				
+				int y = Integer.parseInt(size);
+				
+				draw1.eraser(y*10);
+				
 				ss=(JButton) e.getSource();
 				ss.setEnabled(false);
 				
@@ -171,7 +215,7 @@ public class ToolsPanel extends JPanel {
 		//panel.setBackground(Color.WHITE);
 		for (int i = 1; i < 4; i++) {
 			// 根据得到的URL来加载按钮的背景图片
-			ImageIcon icon = new ImageIcon("src" + File.separator+"ui"+ File.separator+"s"+i+".png");;
+			ImageIcon icon = new ImageIcon("s"+i+".png");;
 			// 实例化一个按钮对象
 			JButton button = new JButton(icon);
 			// 设置按钮的大小
@@ -192,7 +236,7 @@ public class ToolsPanel extends JPanel {
 		this.add(panel);
 		panel.setVisible(false);
 		
-		sb.doClick();//点击初始化选取的工具
+		//sb.doClick();//点击初始化选取的工具
 		ss.doClick();//点击初始化选取的粗细
 	}
 

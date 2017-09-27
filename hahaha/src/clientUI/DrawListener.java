@@ -114,8 +114,9 @@ public class DrawListener extends MouseAdapter {
 	public void mouseReleased(MouseEvent e) {
 		String action = toolsPanel.getTool();
 		if (action.equals("3")) {// 当用户选择的是直线执行绘制直线的步骤
-			x2 = e.getX();
-			y2 = e.getY();
+			//x2 = e.getX();
+			//y2 = e.getY();
+			
 			graphics2d.drawLine(x1, y1, x2, y2);
 		} else if (action.equals("2xxxx")) {// 当用户选择的是选框工具按钮执行的动作
 			x2 = e.getX();

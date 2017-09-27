@@ -30,9 +30,11 @@ public class SingleDrawing extends JComponent {
 	
 	public SingleDrawing(BufferedImage loadimg) {
 		paintImg(loadimg);
+		g2.setPaint(Color.black);
 	}
 
 	public SingleDrawing() {
+		g2.setPaint(Color.black);
 		
 	}
 
@@ -278,6 +280,13 @@ public class SingleDrawing extends JComponent {
 		repaint();
 	}
 
+	public void cc(Color color) {
+		g2.setPaint(color);
+		String x = color.getRed()+","+color.getGreen()+","+color.getBlue();
+		System.out.println(x);
+		
+		
+	}
 	public void red() {
 		g2.setPaint(Color.red);
 	}
