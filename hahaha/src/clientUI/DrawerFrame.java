@@ -101,25 +101,7 @@ public class DrawerFrame extends JFrame {
 
 		// 调用创建菜单选项的方法在窗体上创建菜单选项
 		createMenuBar();		
-		/*
-		// 实例化一个JPanel对象用于放置画板绘图区域
-		JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 2));
-		centerPanel.setBackground(Color.GRAY);// 设置背景色为灰色
-
-		// 实例化一个画图区域对象，实际上就是JPanel的实例
-		JPanel drawPanel = new JPanel();
-		// 设置绘图区域的背景色为白色
-		drawPanel.setBackground(Color.WHITE);
-		// 设置绘图区域的大小
-		drawPanel.setPreferredSize(new Dimension(657, 492));
-		// 将绘图区域添加到centerPanel中
-		
-		 */
-		
-		
-		//centerPanel.add(draw1);
-		//drawPanel.add(draw1);
-		// 将centerPanel添加到窗体中
+		//add the canvas to the UI panel
 		this.add(draw1, BorderLayout.CENTER);
 
 		// 实例化一个图形选择工具条
@@ -131,24 +113,10 @@ public class DrawerFrame extends JFrame {
 		// 实例化一个聊天窗口及成员控制栏目
 		ChatPanel chatPanel = new ChatPanel(isManager);
 		// 将栏目添加到窗体上
-		this.add(chatPanel, BorderLayout.EAST);
-		
+		this.add(chatPanel, BorderLayout.EAST);	
 		
 		this.setVisible(true);
 
-		// 给DrawPanel添加监听器
-		//Graphics2D graphics2d = (Graphics2D) drawPanel.getGraphics();
-		// 实例化一个绘图区域的监听器
-		//DrawListener dl = new DrawListener(graphics2d, toolsPanel);
-		//drawPanel.addMouseListener(dl);
-		//drawPanel.addMouseMotionListener(dl);
-		// 实例化一个菜单选项监听器对象
-		/*
-		MenuListener ml = new MenuListener(graphics2d);
-		for (JMenuItem item : list) {
-			item.addActionListener(ml);
-		}
-		 */
 	}
 
 	/**
@@ -170,7 +138,8 @@ public class DrawerFrame extends JFrame {
 				switch(menuAction) { //set color
 				case "New"://TODO 如果是新建，则新建
 					System.out.println("menuAction="+menuAction);
-					draw1.clear();
+					//draw1.clear(); for individual canvas
+					makeRequest("canvas,clear,0,0,0"); //need to implement ClientSocket first
 					file = null;
 					break;
 
@@ -183,7 +152,8 @@ public class DrawerFrame extends JFrame {
 						BufferedImage img;
 						try {
 							img = ImageIO.read(new File(file.toString()));
-							draw1.paintImg(img);
+							makeRequest2(img); // need to implement ClientSocket first!
+							//draw1.paintImg(img); for individual canvas
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();

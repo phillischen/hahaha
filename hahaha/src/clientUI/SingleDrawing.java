@@ -30,11 +30,11 @@ public class SingleDrawing extends JComponent {
 	
 	public SingleDrawing(BufferedImage loadimg) {
 		paintImg(loadimg);
-		g2.setPaint(Color.black);
+		black();
 	}
 
 	public SingleDrawing() {
-		g2.setPaint(Color.black);
+		black();
 		
 	}
 
@@ -297,6 +297,7 @@ public class SingleDrawing extends JComponent {
 
 	public void black() {
 		g2.setPaint(Color.black);
+		 
 	}
 
 	public void green() {

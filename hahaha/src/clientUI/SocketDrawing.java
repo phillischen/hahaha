@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
-import WBclient.ClientSocket;
 
 public class SocketDrawing extends JComponent {
 
@@ -26,22 +25,20 @@ public class SocketDrawing extends JComponent {
 	private int currentX, currentY, oldX, oldY;
 	private MouseListener ml;
 	private MouseMotionListener mml;
-	private int red;
-	private int green;
-	private int blue;
+	private String currentColor;
 	ClientSocket clientSocket;
 
 	
 	public SocketDrawing(BufferedImage loadimg, ClientSocket sk) {
 		paintImg(loadimg);
 		clientSocket = sk;
-		g2.setPaint(Color.black);
+		black();
 	}
 	
 
 	public SocketDrawing(ClientSocket sk) {
 		clientSocket = sk;
-		g2.setPaint(Color.black);
+		black();
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -253,8 +250,9 @@ public class SocketDrawing extends JComponent {
 				currentX = e.getX();
 				currentY = e.getY();
 				g2.setPaint(Color.white);
+				currentColor = "255,255,255";
 				if (g2 != null) {
-					clientSocket.makeRequest("canvas,eraser,white,"+oldX+","+oldY+","+size+","+size);
+					clientSocket.makeRequest("canvas,eraser,"+currentColor+","+oldX+","+oldY+","+size+","+size);
 					//g2.fillOval(oldX, oldY, size, size);
 					
 					//repaint();
@@ -294,14 +292,14 @@ public class SocketDrawing extends JComponent {
 		// draw white on entire draw area to clear
 		g2.fillRect(0, 0, getSize().width, getSize().height);
 		g2.setPaint(Color.black);
-		currentColor = "black";
+		currentColor = "0,0,0";
 		repaint();
 	}
 	
 	public void cc(Color color) {
 		g2.setPaint(color);
 		String x = color.getRed()+","+color.getGreen()+","+color.getBlue();
-		System.out.println(x);
+		System.out.println("RBG:"+x);
 		
 		
 	}
@@ -318,7 +316,7 @@ public class SocketDrawing extends JComponent {
 
 	public void black() {
 		g2.setPaint(Color.black);
-		currentColor = "black";
+		currentColor = "0,0,0";
 	}
 
 	public void green() {
