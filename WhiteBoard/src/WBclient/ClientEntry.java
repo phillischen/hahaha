@@ -25,12 +25,12 @@ public class ClientEntry extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private ClientSocket mysocket;
-	private SVSocket serverSocket;
+	//private SVSocket serverSocket;
 	private String host;
 	private int port;
 
 	
-
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -46,7 +46,7 @@ public class ClientEntry extends JFrame {
 		});
 	}
 
-
+	*/
 	 
 	public ClientEntry() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
