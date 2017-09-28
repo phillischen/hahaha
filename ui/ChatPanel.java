@@ -1,4 +1,4 @@
-package clientUI;
+package ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -69,7 +69,7 @@ public class ChatPanel extends JPanel {
 		panel3.add(messages);//加到panel3上
 
 		// 实例化一个发送按钮
-		ImageIcon icon = new ImageIcon("send.png");
+		ImageIcon icon = new ImageIcon("src" + File.separator+"ui"+ File.separator+"send.png");
 		final JButton jbSend = new JButton(icon);
 		jbSend.setBounds(240, 300, 56, 56);
 		jbSend.setActionCommand("send");
@@ -202,7 +202,7 @@ public class ChatPanel extends JPanel {
 			//panel.setPreferredSize(new Dimension(20,300));
 			panel.setBackground(new Color(240,240,240));
 			panel.setLayout(null);
-			ImageIcon icon = new ImageIcon(imagePath+".png");
+			ImageIcon icon = new ImageIcon("src" + File.separator+"ui"+ File.separator+imagePath+".png");
 			final JButton button = new JButton(icon);
 			button.setBounds(0, 0, 25, 25);
 			button.setActionCommand("send");

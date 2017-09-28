@@ -1,4 +1,4 @@
-package clientUI;
+package ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,7 +18,6 @@ import javax.swing.JPanel;
  * 工具栏里没有什么需要对接的东西，比较简单
  * 
  */
-
 public class ToolsPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -29,10 +28,10 @@ public class ToolsPanel extends JPanel {
 	private JButton ss;//目前选择的大小按钮
 	private Color colorL;//左键存储的颜色
 	private Color colorR;//右键存储的颜色
-	private SingleDrawing draw1;
+	private SocketDrawing draw1;
 	private Boolean isManager;
 	
-	public ToolsPanel(SingleDrawing draw,boolean isManager) {
+	public ToolsPanel(SocketDrawing draw,boolean isManager) {
 		this.tool="1";
 		this.size="2";
 		this.isManager=isManager;

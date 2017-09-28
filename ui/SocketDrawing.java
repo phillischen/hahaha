@@ -1,5 +1,6 @@
-package clientUI;
+package ui;
 
+import ui.DrawerFrame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,36 +12,49 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import javax.imageio.ImageIO;
 
 import javax.swing.JComponent;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class SocketDrawing extends JComponent {
 
 	private static final long serialVersionUID = 1L;
-	private Image image;
+	private static Image image;
 	// Graphics2D object ==> used to draw on
-	protected Graphics2D g2;
+	protected static Graphics2D g2;
 	// Mouse coordinates
 	private int currentX, currentY, oldX, oldY;
 	private MouseListener ml;
 	private MouseMotionListener mml;
 	private String currentColor;
-	ClientSocket clientSocket;
+	DrawerFrame client;
 
 	
-	public SocketDrawing(BufferedImage loadimg, ClientSocket sk) {
+	SocketDrawing(BufferedImage loadimg, DrawerFrame sk) throws IOException {
 		paintImg(loadimg);
-		clientSocket = sk;
+                //paintImg(ImageIO.read(new File("img.png")));
+		client = sk;
 		black();
 	}
-	
-
-	public SocketDrawing(ClientSocket sk) {
-		clientSocket = sk;
+        
+	SocketDrawing(DrawerFrame sk) throws IOException {
+		client = sk;
+                paintImg(ImageIO.read(new File("img.png")));
+                clear();
+                //paintComponent(g2);
 		black();
 	}
 
+        public static Graphics2D getGraphics2D(){
+            return g2;
+        }
+        
 	protected void paintComponent(Graphics g) {
 		if (image == null) {
 			// image to draw null ==> we create
@@ -60,7 +74,7 @@ public class SocketDrawing extends JComponent {
 		g.drawImage(image, 0, 0, null);
 	}
 	
-	protected Image save() {
+	protected static Image save() {
 		return image;
 	}
 	
@@ -98,8 +112,8 @@ public class SocketDrawing extends JComponent {
 				if (g2 != null) {
 					// draw line if g2 context not null
 					//g2.drawLine(oldX, oldY, currentX, currentY);
-					clientSocket.makeRequest("canvas,line,"+currentColor+","+oldX+","+oldY+","+
-					currentX+","+currentY);
+                                        client.getArgument(argumentList("line", currentColor, oldX, oldY, currentX, currentY, 0, ""));
+					//clientSocket.makeRequest("canvas,line,"+currentColor+","+oldX+","+oldY+","+currentX+","+currentY);
 					// refresh draw area to repaint
 					//repaint();
 					// store current coords x,y as olds x,y
@@ -112,7 +126,6 @@ public class SocketDrawing extends JComponent {
 
 	}
 	
-
 	public void rectangle() {
 		// int x = getDistance();
 		removeMouseListener(ml);
@@ -130,8 +143,9 @@ public class SocketDrawing extends JComponent {
 				currentX = e.getX();
 				currentY = e.getY();
 				System.out.println("REALEASE = " + currentX + ", " + currentY);
-				clientSocket.makeRequest("canvas,rect,"+currentColor+","+oldX+","+oldY+","+
-				Math.abs(currentX - oldX)+","+Math.abs(currentY - oldY));
+                                client.getArgument(argumentList("rect", currentColor, oldX, oldY, currentX, currentY, 0, ""));
+				//clientSocket.makeRequest("canvas,rect,"+currentColor+","+oldX+","+oldY+","+
+				//Math.abs(currentX - oldX)+","+Math.abs(currentY - oldY));
 				//g2.drawRect(oldX, oldY, Math.abs(currentX - oldX), Math.abs(currentY - oldY));
 				//repaint();
 				System.out.println("rectangle repainted");
@@ -159,8 +173,9 @@ public class SocketDrawing extends JComponent {
 				currentX = e.getX();
 				currentY = e.getY();
 				System.out.println("REALEASE = " + currentX + ", " + currentY);
-				clientSocket.makeRequest("canvas,oval,"+currentColor+","+oldX+","+oldY+","+
-						Math.abs(currentX - oldX)+","+Math.abs(currentY - oldY));
+                                client.getArgument(argumentList("oval", currentColor, oldX, oldY, currentX, currentY, 0, ""));
+				//clientSocket.makeRequest("canvas,oval,"+currentColor+","+oldX+","+oldY+","+
+				//		Math.abs(currentX - oldX)+","+Math.abs(currentY - oldY));
 				//g2.drawOval(oldX, oldY, Math.abs(currentX - oldX), Math.abs(currentY - oldY));
 				//repaint();
 				System.out.println("oval repainted");
@@ -189,8 +204,9 @@ public class SocketDrawing extends JComponent {
 				currentY = e.getY();
 				int diameter = Math.max(Math.abs(currentX - oldX), Math.abs(currentY - oldY));
 				System.out.println("REALEASE = " + currentX + ", " + currentY);
-				clientSocket.makeRequest("canvas,circle,"+currentColor+","+oldX+","+oldY+","+
-						diameter+","+diameter);
+                                client.getArgument(argumentList("circle", currentColor, oldX, oldY, currentX, currentY, 0, ""));
+				//clientSocket.makeRequest("canvas,circle,"+currentColor+","+oldX+","+oldY+","+
+				//		diameter+","+diameter);
 				//g2.drawOval(oldX, oldY, diameter, diameter);
 				//repaint();
 				System.out.println("repainted");
@@ -218,8 +234,9 @@ public class SocketDrawing extends JComponent {
 				currentX = e.getX();
 				currentY = e.getY();
 				System.out.println("REALEASE = " + currentX + ", " + currentY);
-				clientSocket.makeRequest("canvas,line,"+currentColor+","+oldX+","+oldY+","+
-						currentX+","+currentY);
+				client.getArgument(argumentList("line", currentColor, oldX, oldY, currentX, currentY, 0, ""));
+                                //clientSocket.makeRequest("canvas,line,"+currentColor+","+oldX+","+oldY+","+
+				//		currentX+","+currentY);
 				//g2.drawLine(oldX, oldY, currentX, currentY);
 				//repaint();
 				System.out.println("repainted");
@@ -252,7 +269,8 @@ public class SocketDrawing extends JComponent {
 				g2.setPaint(Color.white);
 				currentColor = "255,255,255";
 				if (g2 != null) {
-					clientSocket.makeRequest("canvas,eraser,"+currentColor+","+oldX+","+oldY+","+size+","+size);
+                                        client.getArgument(argumentList("eraser", currentColor, oldX, oldY, 0, 0, size, ""));
+					//clientSocket.makeRequest("canvas,eraser,"+currentColor+","+oldX+","+oldY+","+size+","+size);
 					//g2.fillOval(oldX, oldY, size, size);
 					
 					//repaint();
@@ -275,7 +293,9 @@ public class SocketDrawing extends JComponent {
 				// save coord x,y when mouse is pressed
 				oldX = e.getX();
 				oldY = e.getY();
-				clientSocket.makeRequest("canvas,text,"+currentColor+","+input+","+oldX+","+oldY);
+                                
+                                client.getArgument(argumentList("text", currentColor, oldX, oldY, 0, 0, 0, input));
+				//clientSocket.makeRequest("canvas,text,"+currentColor+","+input+","+oldX+","+oldY);
 				//g2.drawString(input, oldX, oldY);
 				//repaint();
 				System.out.println("draw text repaint");
@@ -287,7 +307,7 @@ public class SocketDrawing extends JComponent {
 	}
 
 	// now we create exposed methods
-	protected void clear() {
+	public void clear() {
 		g2.setPaint(Color.white);
 		// draw white on entire draw area to clear
 		g2.fillRect(0, 0, getSize().width, getSize().height);
@@ -383,5 +403,52 @@ public class SocketDrawing extends JComponent {
 		g2.setPaint(Color.yellow.darker());
 		currentColor = "darkyellow";
 	}
+        
+        public static JSONObject argumentList(String method, String color, int oldX, int oldY, int currentX, int currentY, int size, String inputText){
+            JSONObject command = new JSONObject();
+            JSONObject arguments = new JSONObject();
+
+            try {
+                    arguments.put("type", "canvas");
+                    switch(method){
+                        case "color":
+                            arguments.put("color", color);
+                            break;
+                        case "freeDraw":
+                        case "line":
+                        case "rect":
+                        case "oval":
+                        case "circle":
+                            arguments.put("oldX", oldX);
+                            arguments.put("oldY", oldY);
+                            arguments.put("currentX", currentX);
+                            arguments.put("currentY", currentY);
+                            break;
+                        case "eraser":
+                            arguments.put("oldX", oldX);
+                            arguments.put("oldY", oldY);
+                            arguments.put("size", size);
+                            break;
+                        case "text":
+                            arguments.put("oldX", oldX);
+                            arguments.put("oldY", oldY);
+                            arguments.put("inputText", inputText);
+                            break;
+                        case "clear":
+                            break;
+                        default:
+                            break;
+                    }
+
+                    command.put("kind", "oldClient");
+                    command.put("method", method);
+                    command.put("arguments", arguments);
+
+            } catch (JSONException e) {
+                System.err.println(e.getMessage());
+            }
+            return command;
+        }
+        
 
 }
